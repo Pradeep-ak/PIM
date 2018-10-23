@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: PIMRegistry
+server:
+  port: 8061
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+logging:
+  level:
+    root: INFO

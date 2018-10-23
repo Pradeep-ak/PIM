@@ -1,0 +1,50 @@
+spring:
+  profiles: local
+catalog:
+  cassandra:
+    schemaName: pimcatalog
+    hostName: 0.0.0.0
+    port: 9042
+
+---
+spring:
+  profiles: docker
+catalog:
+  cassandra:
+    schemaName: pimcatalog
+    hostName: cassandra
+    port: 9042
+
+hystrix.command.recordSkuChanges.circuitBreaker:
+  requestVolumeThreshold: 20
+  errorThresholdPercentage: 50
+  sleepWindowInMilliseconds: 5000
+
+kafka:
+  bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+  topic:
+    audit:
+      skuTopic: sku-audit-topic.t
+      productTopic: product-audit-topic.t
+    feed:
+      skuTopic: sku-feed-topic.t
+      productTopic: product-feed-topic.t
+    ES:
+      skuTopic: sku-es-topic.t
+      productTopic: product-es-topic.t
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_INSTANCE_HOSTNAME}:${EUREKA_INSTANCE_PORT}/eureka
+  instance:
+    preferIpAddress: true
+
+com:
+  pim:
+    audit-url:
+      sku: http://pimaudit/save/sku
+      product:
+    es-url:
+      sku: http://pimes/es/indexSku
+      product:

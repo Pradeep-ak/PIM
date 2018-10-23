@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: PIMAudit
+
+logging:
+  level:
+    root: INFO

@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: PIMES
+
+logging:
+  level:
+    root: INFO

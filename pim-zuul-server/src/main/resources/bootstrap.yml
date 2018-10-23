@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: PIMZuul
+  banner:
+    location: classpath:banner/bannername.txt
+---
+spring:
+  profiles: docker
+  cloud:
+    config:
+      uri: ${config-server}
+      username: root
+      password: password

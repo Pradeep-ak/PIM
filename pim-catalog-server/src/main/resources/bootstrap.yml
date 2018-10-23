@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: PIMCatalog
+  banner:
+    location: classpath:banner/bannername.txt
+
+---
+spring:
+  profiles: docker
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
+  cloud:
+    config:
+      uri: ${config-server}
+      username: root
+      password: password
+
+---
+spring:
+  profiles: local
+  rabbitmq:
+    host: 0.0.0.0
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
+  cloud:
+    config:
+      uri: http://localhost:9999
+      username: root
+      password: password

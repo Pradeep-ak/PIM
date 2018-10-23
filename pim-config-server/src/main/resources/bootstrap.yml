@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: PIMConfig
+  banner:
+    location: classpath:banner/bannername.txt
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          searchLocations: classpath:config/
+
+security:
+  user: root
+  password: password
+
+endpoints:
+    restart:
+      enabled: true
+
+---
+spring:
+  profiles: docker
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
+server:
+  port: 8888
+
+---
+spring:
+  profiles: local
+  rabbitmq:
+      host: 0.0.0.0
+      port: 5672
+      username: rabbitmq
+      password: rabbitmq
+server:
+  port: 9999
+

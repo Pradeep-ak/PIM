@@ -1,0 +1,14 @@
+spring:
+  profiles: docker
+server:
+  port: ${EUREKA_INSTANCE_PORT}
+eureka:
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME}
+
+---
+server:
+  port: 8061
+eureka:
+  instance:
+    hostname: localhost

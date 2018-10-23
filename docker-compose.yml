@@ -1,0 +1,248 @@
+version: "2"
+
+services:
+#  mongodb:
+#    image: mongo:3.0.4
+#    command: mongod --smallfiles
+#    ports:
+#      - "27017:27017"
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+  kafka:
+    image: spotify/kafka
+    ports:
+    - "2181:2181"
+    - "9092:9092"
+    hostname: kafka
+    container_name: kafka
+    environment:
+    - "ADVERTISED_HOST=kafka"
+    - "ADVERTISED_PORT=9092"
+    - "AUTO_CREATE_TOPICS=true"
+    command: >
+        bash -c
+        "(sleep 15s &&
+        /opt/kafka_2.11-0.10.1.0/bin/kafka-topics.sh
+        --create
+        --zookeeper
+        localhost:2181 --replication-factor 1 --partitions 1
+        --topic dummy_topic &) && (supervisord -n)"
+#  neo4j:
+#    image: neo4j:2.3.0
+#    labels:
+#      NAME: "neo4j"
+#    ports:
+#      - "7474:7474"
+  cassandra:
+    hostname: cassandra
+    image: cassandra:3.11.3
+    container_name: cassandra
+    labels:
+      NAME: "cassandra"
+    command: /bin/bash -c "sleep 1 && echo ' -- Pausing to let system catch up ... -->' && /docker-entrypoint.sh cassandra -f"
+    expose:
+      - 7000
+      - 7001
+      - 7199
+      - 9042
+      - 9160
+#    volumes: # uncomment if you desire mounts, also uncomment cluster.sh
+#      - ./data/cassandra:/Users/pkulkar4/Personal Data/DemoProjects/DockerShare/cassandra:rw
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    container_name: elasticsearch
+    hostname: "elasticsearch"
+    labels:
+          NAME: "elasticsearch"
+    environment:
+      - cluster.name=catalog
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/pipeline:/usr/share/elasticsearch/plugins:ro
+#      - /Users/pkulkar4/Personal Data/DemoProjects/DockerShare/ES/data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: "rabbitmq"
+    container_name: rabbitmq
+    labels:
+      NAME: "rabbitmq"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - "./pim-config-server/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"
+#      - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
+#      - "./autocluster-0.4.1.ez:/usr/lib/rabbitmq/lib/rabbitmq_server-3.5.5/plugins/autocluster-0.4.1.ez"
+
+  config-server:
+    build: pim-config-server/.
+    working_dir: /
+    labels:
+      NAME: "pimconfig"
+    hostname: "pimconfig"
+    container_name: config-server
+    image: config-server:1.0
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,native
+#    links:
+#      - rabbitmq
+#    depends_on:
+#      - rabbitmq
+
+  pimcatalog-server:
+    build: pim-catalog-server/.
+    working_dir: /
+    labels:
+      NAME: "pimcatalog"
+    hostname: "pimcatalog"
+    container_name: pimcatalog-server
+    image: pimcatalog-server:1.0
+    ports:
+      - "8090:8080"
+    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 120 --
+    command: java -Dspring.profiles.active=docker -jar /app.jar
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,native
+      config-server: http://config-server:8888/
+      audit-server: pimaudit-server
+      audit-port: 8080
+    links:
+      - config-server
+      - cassandra
+      - pimaudit-server
+      - kafka
+    depends_on:
+      - config-server
+      - cassandra
+      - kafka
+
+  pimaudit-server:
+    build: pim-audit-server/.
+    working_dir: /
+    labels:
+      NAME: "pimaudit"
+    hostname: "pimaudit"
+    container_name: pimaudit-server
+    image: pimaudit-server:1.0
+    ports:
+      - "9090:8080"
+    entrypoint: ./wait-for-it.sh pimregistry-server:8061 cassandra:9042 -t 120 --
+    command: java -Dspring.profiles.active=docker -jar /app.jar
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,native
+      config-server: http://config-server:8888/
+    links:
+      - config-server
+      - cassandra
+    depends_on:
+      - config-server
+      - cassandra
+
+  pimregistry-server:
+    build: pim-registry-server/.
+    working_dir: /
+    labels:
+      NAME: "pimregistry"
+    hostname: "pimregistry"
+    container_name: pimregistry-server
+    image: pimregistry-server:1.0
+    ports:
+      - "7070:8061"
+    entrypoint: ./wait-for-it.sh config-server:8888 -t 120 --
+    command: java -Dspring.profiles.active=docker -jar /app.jar
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,native
+      config-server: http://config-server:8888/
+    links:
+      - config-server
+    depends_on:
+      - config-server
+
+  pimes-server:
+    build: pim-es-server/.
+    working_dir: /
+    labels:
+      NAME: "pimes"
+    hostname: "pimes"
+    image: pimes-server:1.0
+    container_name: pimes-server
+    links:
+      - config-server
+      - elasticsearch
+    depends_on:
+      - config-server
+      - elasticsearch
+    ports:
+      - "6060:8080"
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,native
+      - config-server=http://config-server:8888/
+      - "JAVA_OPTS=-Xmx256m -Xms256m"
+    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
+    command: java -Dspring.profiles.active=docker -jar /app.jar
+
+#  pimspark-server:
+#    build: pim-spark-server/.
+#    working_dir: /
+#    labels:
+#      NAME: "pimspark"
+#    hostname: "pimspark"
+#    container_name: pimspark-server
+#    image: pimspark-server:1.0
+#    volumes:
+#      - ./spark/data/:/usr/share/spark/data/:ro
+#    links:
+#      - kafka
+#    depends_on:
+#      - kafka
+
+  pimzuul-server:
+    build: pim-zuul-server/.
+    working_dir: /
+    labels:
+      NAME: "pimzuul"
+    hostname: "pimzuul"
+    container_name: pimzuul-server
+    image: pimzuul-server:1.0
+    ports:
+      - "80:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,native
+      config-server: http://config-server:8888/
+      audit-server: pimaudit-server
+      audit-port: 8080
+    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
+    command: java -Dspring.profiles.active=docker -jar /app.jar
+
+
+#volumes:
+#  esdata1:
+#    driver: local

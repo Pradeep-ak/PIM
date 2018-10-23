@@ -1,0 +1,15 @@
+pim-escatalog-server
+/pim-zuul-server/target/*
+/pim-spark-server/target/*
+/pim-registry-server/target/*
+/pim-es-server/target/*
+/pim-config-server/target/*
+/pim-catalog-server/target/*
+/pim-audit-server/target/*
+/spark/data/sku/*
+/spark/SQL/*
+.idea
+*.iml
+.mvn
+mvnw
+mvnw.cmd

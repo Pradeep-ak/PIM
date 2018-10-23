@@ -1,0 +1,20 @@
+spring:
+  profiles: docker
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_INSTANCE_HOSTNAME}:${EUREKA_INSTANCE_PORT}/eureka
+  instance:
+    preferIpAddress: true
+
+kafka:
+  bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+  topic:
+    skuESTopic: sku-es-topic.t
+    productESTopic: product-es-topic.t
+    PPESTopic: PP-es-topic.t
+
+elasticsearch:
+  host: ${ES_HOST}
+  port: 9300
+  clustername: catalog

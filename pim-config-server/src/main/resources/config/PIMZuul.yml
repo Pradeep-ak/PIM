@@ -1,0 +1,18 @@
+zuul:
+  routes:
+    catalogservice:
+      path: /catalog/**
+      serviceId: pimcatalog
+    auditservice:
+      path: /audit/**
+      serviceId: pimaudit
+    essearchservice:
+      path: /search/**
+      serviceId: PIMES
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_INSTANCE_HOSTNAME}:${EUREKA_INSTANCE_PORT}/eureka
+  instance:
+    preferIpAddress: true

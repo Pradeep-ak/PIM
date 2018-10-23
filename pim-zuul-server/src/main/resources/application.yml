@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: PIMZuul
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+
+zuul:
+  routes:
+    catalogservice:
+      path: /catalog/**
+      serviceId: pimcatalog
+    auditservice:
+      path: /audit/**
+      serviceId: pimaudit
+    essearchservice:
+      path: /search/**
+      serviceId: PIMES

@@ -1,0 +1,34 @@
+spring:
+  profiles: local
+catalog:
+  cassandra:
+    schemaName: pimaudit
+    hostName: 0.0.0.0
+    port: 9042
+com:
+  audit:
+    record:
+      limits: 5
+---
+spring:
+  profiles: docker
+catalog:
+  cassandra:
+    schemaName: pimaudit
+    hostName: cassandra
+    port: 9042
+com:
+  audit:
+    record:
+      limits: 10
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_INSTANCE_HOSTNAME}:${EUREKA_INSTANCE_PORT}/eureka
+  instance:
+    preferIpAddress: true
+
+kafka:
+  bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+  topic:
+    skuAuditTopic: skuAuditTopic.t
