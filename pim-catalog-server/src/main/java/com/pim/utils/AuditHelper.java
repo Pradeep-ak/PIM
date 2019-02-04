@@ -41,8 +41,8 @@ public class AuditHelper {
         return compareObjects(oSkuData,nSkuData, new HashSet<>(), 5L);
     }
 
-    public List<AuditChanges> getProductChangeRequest(ProductInfo productInfo1, ProductInfo productInfo2) {
-        return compareObjects(productInfo1, productInfo2, new HashSet<>(), 5L);
+    public List<AuditChanges> getProductChangeRequest(ProductModel productModel1, ProductModel productModel2) {
+        return compareObjects(productModel1, productModel2, new HashSet<>(), 5L);
     }
 
     public List<AuditChanges> compareObjects(Object oldObject, Object newObject, Set<String> propertyNamesToAvoid, Long deep) {

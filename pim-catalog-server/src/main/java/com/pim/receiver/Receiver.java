@@ -35,9 +35,9 @@ public class Receiver {
 
     @KafkaListener(topics = "${kafka.topic.feed.productTopic}")
     public void receiveProduct(String payload) throws IOException {
-        LOGGER.info("received payload for catalog-sku-feed ='{}'", payload);
+        LOGGER.info("received payload for catalog-product-feed ='{}'", payload);
         ObjectMapper mapper = new ObjectMapper();
-        ProductInfo productInfo = mapper.readValue(payload, ProductInfo.class);
-        catalogService.load(productInfo);
+        ProductModel productModel = mapper.readValue(payload, ProductModel.class);
+        catalogService.save(productModel);
     }
 }

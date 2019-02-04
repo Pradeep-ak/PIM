@@ -21,4 +21,6 @@ public interface CatalogRepository {
     public Optional<ProductInfo> getProduct(String id);
 
     public boolean save(ProductInfo productInfo);
+
+    Optional<List<ProductInfo>> getProducts(int total);
 }

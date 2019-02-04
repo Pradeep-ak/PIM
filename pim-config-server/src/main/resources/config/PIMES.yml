@@ -18,3 +18,8 @@ elasticsearch:
   host: ${ES_HOST}
   port: 9300
   clustername: catalog
+
+com:
+  pim:
+    catalog-url:
+      sku: http://pimcatalog/sku/{skuId}

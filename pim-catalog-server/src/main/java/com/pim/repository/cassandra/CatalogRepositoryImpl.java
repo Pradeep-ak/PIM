@@ -85,10 +85,17 @@ public class CatalogRepositoryImpl implements CatalogRepository {
 
     @Override
     public boolean save(ProductInfo productInfo) {
-        logger.info("Saving the product data : " + productInfo.getId());
+        logger.info("Saving the product data : " + productInfo.getProductId());
 
         cassandraTemplate.insert(productInfo, InsertOptions.builder()
                 .consistencyLevel(ConsistencyLevel.LOCAL_QUORUM).build());
         return true;
+    }
+
+    @Override
+    public Optional<List<ProductInfo>> getProducts(int total) {
+        return Optional.ofNullable(cassandraTemplate.select(
+                QueryBuilder.select().from("product_info")
+                        .limit(total), ProductInfo.class));
     }
 }

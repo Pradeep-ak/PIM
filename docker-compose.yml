@@ -50,45 +50,45 @@ services:
 #    volumes: # uncomment if you desire mounts, also uncomment cluster.sh
 #      - ./data/cassandra:/Users/pkulkar4/Personal Data/DemoProjects/DockerShare/cassandra:rw
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
-    container_name: elasticsearch
-    hostname: "elasticsearch"
-    labels:
-          NAME: "elasticsearch"
-    environment:
-      - cluster.name=catalog
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./elasticsearch/pipeline:/usr/share/elasticsearch/plugins:ro
-#      - /Users/pkulkar4/Personal Data/DemoProjects/DockerShare/ES/data:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+#    container_name: elasticsearch
+#    hostname: "elasticsearch"
+#    labels:
+#          NAME: "elasticsearch"
+#    environment:
+#      - cluster.name=catalog
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+#      - ./elasticsearch/pipeline:/usr/share/elasticsearch/plugins:ro
+##      - /Users/pkulkar4/Personal Data/DemoProjects/DockerShare/ES/data:/usr/share/elasticsearch/data
+#    ports:
+#      - 9200:9200
 
-  rabbitmq:
-    image: "rabbitmq:3-management"
-    hostname: "rabbitmq"
-    container_name: rabbitmq
-    labels:
-      NAME: "rabbitmq"
-    environment:
-      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-      RABBITMQ_DEFAULT_USER: "rabbitmq"
-      RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      RABBITMQ_DEFAULT_VHOST: "/"
-    ports:
-      - 15672:15672
-      - 5672:5672
-    volumes:
-      - "./pim-config-server/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"
-#      - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
-#      - "./autocluster-0.4.1.ez:/usr/lib/rabbitmq/lib/rabbitmq_server-3.5.5/plugins/autocluster-0.4.1.ez"
+#  rabbitmq:
+#    image: "rabbitmq:3-management"
+#    hostname: "rabbitmq"
+#    container_name: rabbitmq
+#    labels:
+#      NAME: "rabbitmq"
+#    environment:
+#      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+#      RABBITMQ_DEFAULT_USER: "rabbitmq"
+#      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+#      RABBITMQ_DEFAULT_VHOST: "/"
+#    ports:
+#      - 15672:15672
+#      - 5672:5672
+#    volumes:
+#      - "./pim-config-server/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"
+##      - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
+##      - "./autocluster-0.4.1.ez:/usr/lib/rabbitmq/lib/rabbitmq_server-3.5.5/plugins/autocluster-0.4.1.ez"
 
   config-server:
     build: pim-config-server/.
@@ -181,68 +181,82 @@ services:
       - config-server
     depends_on:
       - config-server
-
-  pimes-server:
-    build: pim-es-server/.
+#
+##  pimes-server:
+##    build: pim-es-server/.
+##    working_dir: /
+##    labels:
+##      NAME: "pimes"
+##    hostname: "pimes"
+##    image: pimes-server:1.0
+##    container_name: pimes-server
+##    links:
+##      - config-server
+##      - elasticsearch
+##    depends_on:
+##      - config-server
+##      - elasticsearch
+##    ports:
+##      - "6060:8080"
+##    env_file:
+##      - .env
+##    environment:
+##      - SPRING_PROFILES_ACTIVE=docker,native
+##      - config-server=http://config-server:8888/
+##      - "JAVA_OPTS=-Xmx256m -Xms256m"
+##    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
+##    command: java -Dspring.profiles.active=docker -jar /app.jar
+##
+##  pimspark-server:
+##    build: pim-spark-server/.
+##    working_dir: /
+##    labels:
+##      NAME: "pimspark"
+##    hostname: "pimspark"
+##    container_name: pimspark-server
+##    image: pimspark-server:1.0
+##    volumes:
+##      - ./spark/data/:/usr/share/spark/data/:ro
+##    links:
+##      - kafka
+##    depends_on:
+##      - kafka
+#
+##  pimzuul-server:
+##    build: pim-zuul-server/.
+##    working_dir: /
+##    labels:
+##      NAME: "pimzuul"
+##    hostname: "pimzuul"
+##    container_name: pimzuul-server
+##    image: pimzuul-server:1.0
+##    ports:
+##      - "80:8080"
+##    env_file:
+##      - .env
+##    environment:
+##      SPRING_PROFILES_ACTIVE: docker,native
+##      config-server: http://config-server:8888/
+##      audit-server: pimaudit-server
+##      audit-port: 8080
+##    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
+##    command: java -Dspring.profiles.active=docker -jar /app.jar
+#
+  pimdatacrawler-server:
+    build: DataCrawler/.
     working_dir: /
     labels:
-      NAME: "pimes"
-    hostname: "pimes"
-    image: pimes-server:1.0
-    container_name: pimes-server
+      NAME: "datacrawler"
+    hostname: "datacrawler"
+    container_name: datacrawler-server
+    image: datacrawler-server:1.0
+    volumes:
+      - ./datacrawler/src/:/app:ro
     links:
-      - config-server
-      - elasticsearch
+      - kafka
     depends_on:
-      - config-server
-      - elasticsearch
-    ports:
-      - "6060:8080"
-    env_file:
-      - .env
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,native
-      - config-server=http://config-server:8888/
-      - "JAVA_OPTS=-Xmx256m -Xms256m"
-    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
-    command: java -Dspring.profiles.active=docker -jar /app.jar
-
-#  pimspark-server:
-#    build: pim-spark-server/.
-#    working_dir: /
-#    labels:
-#      NAME: "pimspark"
-#    hostname: "pimspark"
-#    container_name: pimspark-server
-#    image: pimspark-server:1.0
-#    volumes:
-#      - ./spark/data/:/usr/share/spark/data/:ro
-#    links:
-#      - kafka
-#    depends_on:
-#      - kafka
-
-  pimzuul-server:
-    build: pim-zuul-server/.
-    working_dir: /
-    labels:
-      NAME: "pimzuul"
-    hostname: "pimzuul"
-    container_name: pimzuul-server
-    image: pimzuul-server:1.0
-    ports:
-      - "80:8080"
-    env_file:
-      - .env
-    environment:
-      SPRING_PROFILES_ACTIVE: docker,native
-      config-server: http://config-server:8888/
-      audit-server: pimaudit-server
-      audit-port: 8080
-    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
-    command: java -Dspring.profiles.active=docker -jar /app.jar
-
-
-#volumes:
-#  esdata1:
-#    driver: local
+      - kafka
+#
+##volumes:
+##  esdata1:
+##    driver: local

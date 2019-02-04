@@ -8,10 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,24 +18,13 @@ import java.util.List;
  */
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class SkuController {
 
     @Autowired
     private CatalogService catalogService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/sku/load", produces = "application/json")
-    public ResponseEntity loadSkuData(){
-        HashMap<String, String> attributes = new HashMap<>();
-        attributes.put("color","Black");
-        attributes.put("size", "8");
-        catalogService.load(SkuModel
-                .builder().id("11223344556")
-                .displayName("NikeBlackShoes").dynamicAttributes(attributes).build());
-
-        return null;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/sku/save", produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, value = "/sku/save", produces = "application/json")
     public ResponseEntity saveSku(@RequestBody SkuModel model){
         catalogService.load(model);
         return new ResponseEntity(true, HttpStatus.OK);
@@ -47,5 +33,10 @@ public class SkuController {
     @RequestMapping(method = RequestMethod.GET, value = "/sku/top", produces = "application/json")
     public ResponseEntity<List<SkuModel>> getTopSku(){
         return new ResponseEntity<List<SkuModel>>(catalogService.getSkus(10), HttpStatus.OK) ;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/sku/{skuId}", produces = "application/json")
+    public ResponseEntity<SkuModel> getTopSku(@PathVariable(value = "skuId") String skuId){
+        return new ResponseEntity<SkuModel>(catalogService.getSku(skuId), HttpStatus.OK) ;
     }
 }

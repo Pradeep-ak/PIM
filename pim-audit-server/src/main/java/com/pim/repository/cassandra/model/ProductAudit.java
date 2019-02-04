@@ -43,4 +43,7 @@ public class ProductAudit {
     @Column(value = "action")
     private String actionPerformed;
 
+    @Column(value = "type")
+    private String type;
+
 }

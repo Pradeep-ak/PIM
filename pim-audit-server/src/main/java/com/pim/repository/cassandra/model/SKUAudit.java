@@ -44,4 +44,7 @@ public class SKUAudit {
     @Column(value = "action")
     private String actionPerformed;
 
+    @Column(value = "type")
+    private String type;
+
 }

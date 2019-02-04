@@ -18,6 +18,9 @@ public class AssetAuditData {
     @JsonProperty(value = "Id")
     private String Id;
 
+    @JsonProperty(value = "type")
+    private String type;
+
     @JsonIgnore
     private Date updatedTime;
 
@@ -29,4 +32,6 @@ public class AssetAuditData {
 
     @JsonProperty(value = "actionPerformed")
     private String actionPerformed;
+
+
 }

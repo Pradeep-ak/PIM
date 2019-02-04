@@ -75,10 +75,15 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>commons-beanutils</groupId>-->
+			<!--<artifactId>commons-beanutils</artifactId>-->
+			<!--<version>1.8.3</version>-->
+		<!--</dependency>-->
 		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.3</version>
+			<groupId>net.sf.dozer</groupId>
+			<artifactId>dozer</artifactId>
+			<version>5.4.0</version>
 		</dependency>
 	</dependencies>
 

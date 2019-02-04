@@ -125,7 +125,7 @@ public class ProductDocument {
     @Field(type = FieldType.Boolean, store = false, index = true)
     private Boolean hideDisplay;
 
-    @Field(type = FieldType.Boolean, store = true, index = true)
+    @Field(type = FieldType.Boolean, index = true)
     private Boolean status;
 
     private Boolean recycleFeeIndicator;

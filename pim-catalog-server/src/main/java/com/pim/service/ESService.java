@@ -1,7 +1,6 @@
 package com.pim.service;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.pim.model.AssetAuditData;
 import com.pim.model.ESSkuData;
 import com.pim.repository.domain.ProductInfo;
 import org.slf4j.Logger;
@@ -36,10 +35,10 @@ public class ESService {
 
     @HystrixCommand(commandKey = "ESSkuChanges", groupKey = "ESServer",
             fallbackMethod = "updateESSkuChangesFB")
-    public boolean updateESSkuChanges(ESSkuData skuData){
+    public boolean updateESSkuChanges(ESSkuData skuData) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+        headers.setAccept(Arrays.asList(new MediaType[]{MediaType.APPLICATION_JSON}));
         // Request to return JSON format
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -49,14 +48,14 @@ public class ESService {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 ESSkuUdateUrl, HttpMethod.POST, request, String.class);
 
-        if (responseEntity.getStatusCode()== HttpStatus.OK)
+        if (responseEntity.getStatusCode() == HttpStatus.OK)
             logger.info("sku changes are recorded.");
 
         return true;
     }
 
-    public boolean updateESSkuChangesFB(ESSkuData skuData, Throwable e){
-        logger.error("failed to publish the message", e );
+    public boolean updateESSkuChangesFB(ESSkuData skuData, Throwable e) {
+        logger.error("failed to publish the message", e);
         kafkaService.sendESSkuMsg(skuData.getId());
         return false;
     }
@@ -65,7 +64,7 @@ public class ESService {
             fallbackMethod = "updateESProductChangesFB")
     public boolean updateESProductChanges(ProductInfo productInfo) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+        headers.setAccept(Arrays.asList(new MediaType[]{MediaType.APPLICATION_JSON}));
         // Request to return JSON format
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -75,15 +74,15 @@ public class ESService {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 ESProductUdateUrl, HttpMethod.POST, request, String.class);
 
-        if (responseEntity.getStatusCode()== HttpStatus.OK)
+        if (responseEntity.getStatusCode() == HttpStatus.OK)
             logger.info("Product changes are recorded.");
 
         return true;
     }
 
-    public boolean updateESProductChangesFB(ProductInfo productInfo, Throwable e){
-        logger.error("failed to publish the message", e );
-        kafkaService.sendESProductMsg(productInfo.getId());
+    public boolean updateESProductChangesFB(ProductInfo productInfo, Throwable e) {
+        logger.error("failed to publish the message", e);
+        kafkaService.sendESProductMsg(productInfo.getProductId());
         return false;
     }
 }

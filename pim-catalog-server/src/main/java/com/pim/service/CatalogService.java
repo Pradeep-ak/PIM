@@ -46,12 +46,12 @@ public class CatalogService {
         Optional<SkuInfo> oSkuInfo = catalogRepository.getSku(skuData.getId());
         if (oSkuInfo.isPresent()) {
             List<AuditChanges> auditChanges = helper.getSKUChangeRequest(beanConverter.convertSKUInfotoModel(oSkuInfo.get()), skuData);
-            auditRequest = AssetAuditData.builder().actionPerformed("update").updatedTime(new Date())
+            auditRequest = AssetAuditData.builder().type("sku").actionPerformed("update").updatedTime(new Date())
                     .changedProperties(auditChanges.stream().map(
                             e->e.getPropertyName()).collect(Collectors.toList()))
                     .Id(skuData.getId()).build();
         }else {
-            auditRequest = AssetAuditData.builder().actionPerformed("create")
+            auditRequest = AssetAuditData.builder().type("sku").actionPerformed("create")
                     .updatedTime(new Date())
                     .Id(skuData.getId()).build();
         }
@@ -67,24 +67,38 @@ public class CatalogService {
         ).collect(Collectors.toList());
     }
 
-    public void load(ProductInfo productInfo) {
+    public SkuModel getSku(String skuId) {
+        return catalogRepository.getSku(skuId).map(e -> beanConverter.convertSKUInfotoModel(e)).orElse(new SkuModel());
+    }
 
+    public void save(ProductModel productModel) {
         AssetAuditData auditRequest = null;
-        Optional<ProductInfo> oProductInfo = catalogRepository.getProduct(productInfo.getId());
-        if (oProductInfo.isPresent()) {
-            List<AuditChanges> auditChanges = helper.getProductChangeRequest(oProductInfo.get(), productInfo);
-            auditRequest = AssetAuditData.builder().actionPerformed("update").updatedTime(new Date())
+        Optional<ProductInfo> productInfo = catalogRepository.getProduct(productModel.getProductId());
+        if (productInfo.isPresent()) {
+            List<AuditChanges> auditChanges = helper.getProductChangeRequest(beanConverter.convertProductInfotoModel(productInfo.get()), productModel);
+            auditRequest = AssetAuditData.builder().type("product").actionPerformed("update").updatedTime(new Date())
                     .changedProperties(auditChanges.stream().map(
                             e->e.getPropertyName()).collect(Collectors.toList()))
-                    .Id(productInfo.getId()).build();
+                    .Id(productModel.getProductId()).build();
         }else {
-            auditRequest = AssetAuditData.builder().actionPerformed("create")
+            auditRequest = AssetAuditData.builder().type("product").actionPerformed("create")
                     .updatedTime(new Date())
-                    .Id(productInfo.getId()).build();
+                    .Id(productModel.getProductId()).build();
         }
-        catalogRepository.save(productInfo);
-        esService.updateESProductChanges(productInfo);
+        ProductInfo info = beanConverter.convertProductModeltoInfo(productModel);
+        catalogRepository.save(info);
+        esService.updateESProductChanges(info);
         auditService.recordProductChanges(auditRequest);
+    }
 
+    public List<ProductModel> getProducts(int count) {
+        return catalogRepository.getProducts(count).orElse(new ArrayList<ProductInfo>()).stream().map(
+                e -> beanConverter.convertProductInfotoModel(e)
+        ).collect(Collectors.toList());
+    }
+
+    public ProductModel getProduct(String productId) {
+        return catalogRepository.getProduct(productId).map(
+                e -> beanConverter.convertProductInfotoModel(e)).orElse(new ProductModel());
     }
 }
