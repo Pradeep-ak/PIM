@@ -50,26 +50,26 @@ services:
 #    volumes: # uncomment if you desire mounts, also uncomment cluster.sh
 #      - ./data/cassandra:/Users/pkulkar4/Personal Data/DemoProjects/DockerShare/cassandra:rw
 
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
-#    container_name: elasticsearch
-#    hostname: "elasticsearch"
-#    labels:
-#          NAME: "elasticsearch"
-#    environment:
-#      - cluster.name=catalog
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    volumes:
-#      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-#      - ./elasticsearch/pipeline:/usr/share/elasticsearch/plugins:ro
-##      - /Users/pkulkar4/Personal Data/DemoProjects/DockerShare/ES/data:/usr/share/elasticsearch/data
-#    ports:
-#      - 9200:9200
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    container_name: elasticsearch
+    hostname: "elasticsearch"
+    labels:
+          NAME: "elasticsearch"
+    environment:
+      - cluster.name=catalog
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/pipeline:/usr/share/elasticsearch/plugins:ro
+#      - /Users/pkulkar4/Personal Data/DemoProjects/DockerShare/ES/data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
 
 #  rabbitmq:
 #    image: "rabbitmq:3-management"
@@ -182,30 +182,30 @@ services:
     depends_on:
       - config-server
 #
-##  pimes-server:
-##    build: pim-es-server/.
-##    working_dir: /
-##    labels:
-##      NAME: "pimes"
-##    hostname: "pimes"
-##    image: pimes-server:1.0
-##    container_name: pimes-server
-##    links:
-##      - config-server
-##      - elasticsearch
-##    depends_on:
-##      - config-server
-##      - elasticsearch
-##    ports:
-##      - "6060:8080"
-##    env_file:
-##      - .env
-##    environment:
-##      - SPRING_PROFILES_ACTIVE=docker,native
-##      - config-server=http://config-server:8888/
-##      - "JAVA_OPTS=-Xmx256m -Xms256m"
-##    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
-##    command: java -Dspring.profiles.active=docker -jar /app.jar
+  pimes-server:
+    build: pim-es-server/.
+    working_dir: /
+    labels:
+      NAME: "pimes"
+    hostname: "pimes"
+    image: pimes-server:1.0
+    container_name: pimes-server
+    links:
+      - config-server
+      - elasticsearch
+    depends_on:
+      - config-server
+      - elasticsearch
+    ports:
+      - "6060:8080"
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,native
+      - config-server=http://config-server:8888/
+      - "JAVA_OPTS=-Xmx256m -Xms256m"
+    entrypoint: ./wait-for-it.sh pimregistry-server:8061 -t 60 --
+    command: java -Dspring.profiles.active=docker -jar /app.jar
 ##
 ##  pimspark-server:
 ##    build: pim-spark-server/.

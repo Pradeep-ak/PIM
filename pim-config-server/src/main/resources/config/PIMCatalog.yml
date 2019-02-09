@@ -46,5 +46,5 @@ com:
       sku: http://pimaudit/save/sku
       product: http://pimaudit/save/product
     es-url:
-      sku: http://pimes1/es/indexSku
-      product: http://pimes1/es/indexProduct
+      sku: http://pimes/es/indexSku
+      product: http://pimes/es/indexProduct
