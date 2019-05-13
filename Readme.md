@@ -1,5 +1,5 @@
 ## PIM
-	PIM is Product Information Management system. It is help full in maintaining the information of the product which is one of the backend system of many Important systems like E-Commerce site, Fulfillment system etc.
+PIM is Product Information Management system. It is help full in maintaining the information of the product which is one of the backend system of many Important systems like E-Commerce site, Fulfillment system etc.
 This system is addition to already existing PIM system, most of the system out there are paid and closely connect to one of the system. With below system, we tried to make this system independent and easy plugin buildable to communicate to other system in the eco-system.
 
 _ _ It is built on micro service stack (Full Stack), which make it more easily scalable and zero downtime system._ _
@@ -7,7 +7,8 @@ _ _ It is built on micro service stack (Full Stack), which make it more easily s
 Let jump into project and find answer to few basic like:
 
 # What is the architecture of the system?
-	We have N different micro service which are framed based of the functionality they add to system.
+We have N different micro service which are framed based of the functionality they add to system.
+
 Below is list of the micro services which frame the PIM system.
 
 - **_Catalog Service_**: It is prime service, which act as orcistator layer as well as the handle the functionality with catalog data (adding, updating, deleting and fetching).
@@ -23,7 +24,7 @@ Below is list of the micro services which frame the PIM system.
 
 
 # How to install the application in local/cloud?
-	All the micro service including the databases application are docker containers. Only pre-request for installing and run the whole application in local machine.
+All the micro service including the databases application are docker containers. Only pre-request for installing and run the whole application in local machine.
 
 - **_Should have MVN, JDK 1.8 Installed._**
 - **_Should have Docker installed and should be running._**
