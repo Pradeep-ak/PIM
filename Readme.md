@@ -2,7 +2,7 @@
 PIM is Product Information Management system. It is help full in maintaining the information of the product which is one of the backend system of many Important systems like E-Commerce site, Fulfillment system etc.
 This system is addition to already existing PIM system, most of the system out there are paid and closely connect to one of the system. With below system, we tried to make this system independent and easy plugin buildable to communicate to other system in the eco-system.
 
-_ _ It is built on micro service stack (Full Stack), which make it more easily scalable and zero downtime system._ _
+_It is built on micro service stack (Full Stack), which make it more easily scalable and zero downtime system._
 
 Let jump into project and find answer to few basic like:
 
