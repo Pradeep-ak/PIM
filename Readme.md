@@ -6,7 +6,7 @@ _It is built on micro service stack (Full Stack), which make it more easily scal
 
 Let jump into project and find answer to few basic like:
 
-# What is the architecture of the system?
+### What is the architecture of the system?
 We have N different micro service which are framed based of the functionality they add to system.
 
 Below is list of the micro services which frame the PIM system.
@@ -23,7 +23,7 @@ Below is list of the micro services which frame the PIM system.
 - **_Redux/React OR Angular service_**: These servers are frontend server, which consume the endpoint data and paint the UI for the users. Any of these modules can be used. We personal recommend Angular as it is single page application.
 
 
-# How to install the application in local/cloud?
+### How to install the application in local/cloud?
 All the micro service including the databases application are docker containers. Only pre-request for installing and run the whole application in local machine.
 
 - **_Should have MVN, JDK 1.8 Installed._**
@@ -41,17 +41,17 @@ Below is the list of steps to perform run the application.
 
 We are in process of create the file required to docker-swarm and kubernates to make the docker orchestration easy.
 
-# How to do monitoring & reporting of data?
+### How to do monitoring & reporting of data?
 One of the import aspect of PIM system should be monitor of the data and system as in many case PIM will be master system to maintain product data. We have open source plugin in kibana called sential which provides the feature for setting up alert for any given threshold breach. Which we can setup for measuring different parameter and configuring for respective threshold.
 
 It also provides the feature for setting up rich report (which can have data and trend and graphical representation of data) which are scheduled for run at a given period.
 
-# What are the different features in PIM system?
+### What are the different features in PIM system?
 It provides several features related to creating, maintaining and disturbing of the product related information.
 - Role based access of data to view, create and update.
 - Asset level life cycle auditing.
- - Stream/batch based external system integration for updating data in & out of the system.
- - Provide search functionality which is useful for narrow down result and plot trend and data analysis.
+  - Stream/batch based external system integration for updating data in & out of the system.
+  - Provide search functionality which is useful for narrow down result and plot trend and data analysis.
 
 > Please add you mail id in comment section or mail me : pradeep4jobs@gmail.com
 > You can see more details around design [Overview and Other Details](https://pradeepakulkarni.blogspot.com/2018/10/product-information-management.html)
